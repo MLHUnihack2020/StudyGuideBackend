@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/language": "^4.2.1",
     "express": "^4.17.1"
   },
   "repository": {
