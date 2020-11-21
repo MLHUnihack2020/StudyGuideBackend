@@ -10,8 +10,8 @@ const client = new language.LanguageServiceClient();
 
 const PORT = process.env.PORT || 8080
 
-app.get('/', async (req, res) => {
-  const text = `A mango is a stone fruit produced from numerous species of tropical trees belonging to the flowering plant genus Mangifera, cultivated mostly for their edible fruit. Most of these species are found in nature as wild mangoes. The genus belongs to the cashew family Anacardiaceae. Mangoes are native to South Asia,[1][2] from where the "common mango" or "Indian mango", Mangifera indica, has been distributed worldwide to become one of the most widely cultivated fruits in the tropics. Other Mangifera species (e.g. horse mango, Mangifera foetida) are grown on a more localized basis. Worldwide, there are several hundred cultivars of mango. Depending on the cultivar, mango fruit varies in size, shape, sweetness, skin color, and flesh color which may be pale yellow, gold, or orange.[1] Mango is the national fruit of India, Haiti, and the Philippines,[3] and the national tree of Bangladesh.[4] It is the summer national fruit of Pakistan.`
+app.post('/', async (req, res) => {
+  const text = req.body.text;
   console.log("Length: " + text.length);
   const document = {
     content: text,
@@ -22,6 +22,8 @@ app.get('/', async (req, res) => {
   const entities = result.entities;
 
   const questionBank = [];
+
+  let response = { flashcards: [] };
 
   let threshold = 0;
   let x = 0;
@@ -57,6 +59,8 @@ app.get('/', async (req, res) => {
 
           console.log(key);         
           questionBank.push({[entity.name]: question});
+
+          response['flashcards'].push({ question: question, answer: entity.name })
       }
     }
   });
@@ -64,6 +68,8 @@ app.get('/', async (req, res) => {
 
 
   console.log(questionBank)
+
+  res.send(JSON.stringify(response));
 
 
   // console.log('Entities:');
@@ -76,14 +82,6 @@ app.get('/', async (req, res) => {
   // });
 
 });
-
-app.post('/', function (req, res) {
-  const body = req.body;
-
-  console.log(req.body.text);
-
-  res.send(JSON.stringify("{ result: \"test\" }"));
-})
 
 app.listen(PORT, () => {
   console.log('Listening on port ' + PORT + '.');
