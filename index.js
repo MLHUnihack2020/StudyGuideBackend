@@ -55,7 +55,12 @@ app.post('/', async (req, res) => {
         });
       }
 
-      response['flashcards'].push({ question: s, answer: obj.name })
+      const question = s;
+      const answer = obj.name;
+
+      s.replace(answer, "{" + answer.length + "}")
+
+      response['flashcards'].push({ question: question, answer: answer })
     }
   }
   
