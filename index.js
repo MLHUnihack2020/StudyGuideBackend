@@ -3,6 +3,7 @@ const app = express();
 
 const cors = require('cors');
 app.use(cors());
+app.use(express.json());
 
 const language = require('@google-cloud/language');
 const client = new language.LanguageServiceClient();
@@ -79,7 +80,7 @@ app.get('/', async (req, res) => {
 app.post('/', function (req, res) {
   const body = req.body;
 
-  console.log(body);
+  console.log(req.body.text);
 
   res.send(JSON.stringify("{ result: \"test\" }"));
 })
