@@ -12,80 +12,101 @@ const PORT = process.env.PORT || 8080
 
 app.post('/', async (req, res) => {
   const text = req.body.text;
-  console.log("Length: " + text.length);
-  const document = {
-    content: text,
-    type: 'PLAIN_TEXT',
-  };
-
-  const [result] = await client.analyzeEntities({document});
-  const entities = result.entities;
-
+  // const text = `A hairbrush is a handle brush with rigid or soft spokes used in hair care for smoothing, styling, and detangling human hair, or for grooming an animal's fur. It can also be used for styling in combination with a curling iron or hair dryer.
+  // Julienne Mathieu's hair being brushed, then combed and styled in the 1908 French film Hôtel électrique.
+  // A flat brush is normally used for detangling hair, for example after sleep or showering. A round brush can be used for styling and curling hair, especially by a professional stylist, often with a hair dryer. A paddle brush is used to straighten hair and tame fly-aways. For babies with fine, soft hair, many bristle materials are not suitable due to the hardness; some synthetic materials and horse/goat hair bristles are used instead.`;
   const questionBank = [];
-
   let response = { flashcards: [] };
+  let sentences = getSentences(text);
+  let obj = null;
 
-  let threshold = 0;
-  let x = 0;
+  for (let i in sentences) {
 
-  entities.forEach(entity => {
-    threshold += entity.salience;
-    x++;
-  });
+    let s = sentences[i];
 
-  threshold = threshold/x;
+    if (s.length > 0) {
+      console.log("S : " + s);
+      const document = {
+        content: s,
+        type: 'PLAIN_TEXT'
+      };
 
-  entities.forEach(entity => {
-    if (entity.salience > threshold || (entity.type == "PERSON" || entity.type == "LOCATION" || entity.type == "ORGANIZATION" || entity.type == "CONSUMER_GOOD" || entity.type == "WORK_OF_ART")) {
-      if (entity.name.trim().indexOf(' ') == -1) {
-        
-          let key = entity.name;
+      const [result] = await client.analyzeEntities({document});
+      const entities = result.entities; // entities from every sentence
 
-          let found = false;
-          let index = text.indexOf(key);
-          
-          console.log(key);
-          while (true) {
-            if (index - 1 >= 0 && index + 1 < text.length) {
-              console.log(index);
-              console.log(text[index - 1] + " | text | " + text[index + key.length])
-              if (!isAlpha(text[index - 1]) && !isAlpha(text[index + key.length])) {
-                console.log("hihihi");
-                break;
-              } else {
-                index = text.indexOf(key, index + 1);
-              }
-            }
+      let max = 0;
+      let found = false;
+
+      entities.every(entity => {
+        console.log(entity)
+        if (entity.type == "PERSON" || entity.type == "LOCATION" || entity.type == "ORGANIZATION") {
+          obj = entity;
+          found = true;
+          return false;
+        }
+      });
+
+      if (!found) {
+        entities.every(entity => {
+          if (entity.salience > max) { // if not person, then get max salience
+            max = entity.salience;
+            obj = entity;
           }
-
-          let period = text.indexOf('.');
-          let prevPeriod = period;
-          let question = '';
-
-          console.log(period + ": " + index);
-
-          if (period > index) {
-            question = text.substring(0, period).trim();
-          } else {
-            while (period < index) {
-              prevPeriod = period;
-              period = text.indexOf('.', period + 1);
-            }
-            question = text.substring(prevPeriod, period).trim();
-          }
-
-          console.log(question);         
-          questionBank.push({[entity.name]: question});
-
-          response['flashcards'].push({ question: question, answer: entity.name })
+        });
       }
-    }
-  });
 
-  console.log(questionBank)
+      response['flashcards'].push({ question: s, answer: obj.name })
+    }
+  }
+  
+  
+  // entities.forEach(entity => {
+  //   if (entity.salience > threshold || (entity.type == "PERSON" || entity.type == "LOCATION" || entity.type == "ORGANIZATION" || entity.type == "CONSUMER_GOOD" || entity.type == "WORK_OF_ART")) {
+  //     if (entity.name.trim().indexOf(' ') == -1) {
+        
+  //         let key = entity.name;
+
+  //         let index = text.indexOf(key);
+          
+  //         while (true) {
+  //           if (index - 1 >= 0 && index + 1 < text.length) {
+  //             console.log(index);
+  //             console.log(text[index - 1] + " | text | " + text[index + key.length])
+  //             if (!isAlpha(text[index - 1]) && !isAlpha(text[index + key.length])) {
+  //               break;
+  //             } else {
+  //               index = text.indexOf(key, index + 1);
+  //             }
+  //           }
+  //         }
+
+  //         let period = text.indexOf('.');
+  //         let prevPeriod = period;
+  //         let question = '';
+
+  //         if (period > index) {
+  //           question = text.substring(0, period).trim();
+  //         } else {
+  //           while (period < index) {
+  //             prevPeriod = period;
+  //             period = text.indexOf('.', period + 1);
+  //           }
+  //           question = text.substring(prevPeriod, period).trim();
+  //         }
+
+  //         questionBank.push({[entity.name]: question});
+
+  //         response['flashcards'].push({ question: question, answer: entity.name })
+  //     }
+  //   }
+  // });
 
   res.send(JSON.stringify(response));
 });
+
+function getSentences(s) {
+  return s.split('.');
+}
 
 
 function isAlpha(s) {
