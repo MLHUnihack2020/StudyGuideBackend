@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express();
 
+const cors = require('cors');
+app.use(cors());
+
 const language = require('@google-cloud/language');
 const client = new language.LanguageServiceClient();
 
@@ -74,6 +77,14 @@ app.get('/', async (req, res) => {
   // });
 
 });
+
+app.post('/', function (req, res) {
+  const body = req.body;
+
+  console.log(body);
+
+  res.send(JSON.stringify("{ result: \"test\" }"));
+})
 
 app.listen(PORT, () => {
   console.log('Listening on port ' + PORT + '.');
