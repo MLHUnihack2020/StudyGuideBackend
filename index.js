@@ -56,13 +56,13 @@ app.post('/pdf', async (req, res) => {
     doc.font('Helvetica-Bold').text('Question #' + questionNumber, { 
       lineGap: 3
     });
-    doc.text(fixedQuestion, { 
+    doc.font('Helvetica').text(fixedQuestion, { 
       lineGap: 3
     });
     doc.font('Helvetica-Bold').text('Answer #' + questionNumber, { 
       lineGap: 3
     });
-    doc.text(answer, { 
+    doc.font('Helvetica').text(answer, { 
       lineGap: 3
     });
     doc.text(' ');
