@@ -10,4 +10,6 @@ COPY . .
 
 EXPOSE 8080
 
+RUN mkdir generatedPDFs
+
 CMD [ "npm", "start" ]
