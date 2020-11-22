@@ -15,7 +15,14 @@ app.post('/', async (req, res) => {
   // const text = `A hairbrush is a handle brush with rigid or soft spokes used in hair care for smoothing, styling, and detangling human hair, or for grooming an animal's fur. It can also be used for styling in combination with a curling iron or hair dryer.
   // Julienne Mathieu's hair being brushed, then combed and styled in the 1908 French film Hôtel électrique.
   // A flat brush is normally used for detangling hair, for example after sleep or showering. A round brush can be used for styling and curling hair, especially by a professional stylist, often with a hair dryer. A paddle brush is used to straighten hair and tame fly-aways. For babies with fine, soft hair, many bristle materials are not suitable due to the hardness; some synthetic materials and horse/goat hair bristles are used instead.`;
-  const questionBank = [];
+
+  let response = await getQandA(text);
+  
+
+  res.send(JSON.stringify(response));
+});
+
+async function getQandA(text) {
   let response = { flashcards: [] };
   let sentences = getSentences(text);
   let obj = null;
@@ -64,8 +71,8 @@ app.post('/', async (req, res) => {
     }
   }
 
-  res.send(JSON.stringify(response));
-});
+  return response;
+}
 
 function getSentences(s) {
   return s.split('.');
