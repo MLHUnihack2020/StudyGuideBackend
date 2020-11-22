@@ -53,10 +53,16 @@ app.post('/pdf', async (req, res) => {
     let questionNumber = parseInt(i) + 1;
     let fixedQuestion = question.replace(blankSpot, blanks);
 
-    doc.text('Question #' + questionNumber + ': ' + fixedQuestion, { 
+    doc.font('Helvetica-Bold').text('Question #' + questionNumber, { 
       lineGap: 3
     });
-    doc.text('Answer #' + questionNumber + ': ' + answer, { 
+    doc.text(fixedQuestion, { 
+      lineGap: 3
+    });
+    doc.font('Helvetica-Bold').text('Answer #' + questionNumber, { 
+      lineGap: 3
+    });
+    doc.text(answer, { 
       lineGap: 3
     });
     doc.text(' ');
