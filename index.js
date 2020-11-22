@@ -26,16 +26,17 @@ app.post('/', async (req, res) => {
   res.send(JSON.stringify(response));
 });
 
-app.get('/pdf', async (req, res) => {
-  const text = `A hairbrush is a handle brush with rigid or soft spokes used in hair care for smoothing, styling, and detangling human hair, or for grooming an animal's fur. It can also be used for styling in combination with a curling iron or hair dryer.
-  Julienne Mathieu's hair being brushed, then combed and styled in the 1908 French film Hôtel électrique.
-  A flat brush is normally used for detangling hair, for example after sleep or showering. A round brush can be used for styling and curling hair, especially by a professional stylist, often with a hair dryer. A paddle brush is used to straighten hair and tame fly-aways. For babies with fine, soft hair, many bristle materials are not suitable due to the hardness; some synthetic materials and horse/goat hair bristles are used instead.`;
+app.post('/pdf', async (req, res) => {
+  const text = req.body.text;
 
   let response = await getQandA(text);
 
+  let fileCode = parseInt(Math.random() * 10000000000)
+  let filePath = "generatedPDFs/" + fileCode + ".pdf"
+
   const doc = new PDFDocument();
 
-  doc.pipe(fs.createWriteStream('generatedPDFs/test.pdf'));
+  doc.pipe(fs.createWriteStream(filePath));
 
   for (i in response.flashcards) {
     let question = response.flashcards[i].question;
@@ -63,9 +64,20 @@ app.get('/pdf', async (req, res) => {
 
   doc.end();
 
-  await storage.bucket("studygenerator-pdfs").upload("generatedPDFs/test.pdf");
+  await storage.bucket("studygenerator-pdfs").upload(filePath);
 
-  res.send("done");
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error(err)
+      return
+    }
+  })
+
+  let newResponse = {
+    pdfDownload: "https://storage.googleapis.com/studygenerator-pdfs/" + fileCode + ".pdf"
+  }
+
+  res.send(JSON.stringify(newResponse));
 });
 
 async function getQandA(text) {
