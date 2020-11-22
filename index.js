@@ -125,7 +125,9 @@ async function getQandA(text) {
 
       question = question.replace(answer, "{" + answer.length + "}")
 
-      response['flashcards'].push({ question: question, answer: answer })
+      if (!response.flashcards.some(e => e.answer == answer)) {
+        response['flashcards'].push({ question: question, answer: answer })
+      }
     }
   }
 
