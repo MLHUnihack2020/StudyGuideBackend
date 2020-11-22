@@ -33,7 +33,7 @@ app.get('/pdf', async (req, res) => {
 
   const doc = new PDFDocument();
 
-  doc.pipe(fs.createWriteStream('/Users/maxratmeyer/Documents/Workspace/StudyGuideBackend/test.pdf'));
+  doc.pipe(fs.createWriteStream('generatedPDFs/test.pdf'));
 
   for (i in response.flashcards) {
     let question = response.flashcards[i].question;
