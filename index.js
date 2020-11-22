@@ -63,60 +63,12 @@ app.post('/', async (req, res) => {
       response['flashcards'].push({ question: question, answer: answer })
     }
   }
-  
-  
-  // entities.forEach(entity => {
-  //   if (entity.salience > threshold || (entity.type == "PERSON" || entity.type == "LOCATION" || entity.type == "ORGANIZATION" || entity.type == "CONSUMER_GOOD" || entity.type == "WORK_OF_ART")) {
-  //     if (entity.name.trim().indexOf(' ') == -1) {
-        
-  //         let key = entity.name;
-
-  //         let index = text.indexOf(key);
-          
-  //         while (true) {
-  //           if (index - 1 >= 0 && index + 1 < text.length) {
-  //             console.log(index);
-  //             console.log(text[index - 1] + " | text | " + text[index + key.length])
-  //             if (!isAlpha(text[index - 1]) && !isAlpha(text[index + key.length])) {
-  //               break;
-  //             } else {
-  //               index = text.indexOf(key, index + 1);
-  //             }
-  //           }
-  //         }
-
-  //         let period = text.indexOf('.');
-  //         let prevPeriod = period;
-  //         let question = '';
-
-  //         if (period > index) {
-  //           question = text.substring(0, period).trim();
-  //         } else {
-  //           while (period < index) {
-  //             prevPeriod = period;
-  //             period = text.indexOf('.', period + 1);
-  //           }
-  //           question = text.substring(prevPeriod, period).trim();
-  //         }
-
-  //         questionBank.push({[entity.name]: question});
-
-  //         response['flashcards'].push({ question: question, answer: entity.name })
-  //     }
-  //   }
-  // });
 
   res.send(JSON.stringify(response));
 });
 
 function getSentences(s) {
   return s.split('.');
-}
-
-
-function isAlpha(s) {
-  let alphabet = "abcdefghijklmnopqrstuvwxyz";
-  return alphabet.indexOf(s) >= 0;
 }
 
 app.listen(PORT, () => {
