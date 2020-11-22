@@ -2,6 +2,8 @@ const express = require('express')
 const app = express();
 const fs = require("fs");
 const PDFDocument = require('pdfkit');
+const {Storage} = require('@google-cloud/storage');
+const storage = new Storage();
 
 const cors = require('cors');
 app.use(cors());
@@ -60,6 +62,8 @@ app.get('/pdf', async (req, res) => {
   }
 
   doc.end();
+
+  await storage.bucket("studygenerator-pdfs").upload("generatedPDFs/test.pdf");
 
   res.send("done");
 });
