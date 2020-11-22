@@ -1,6 +1,6 @@
 # Study Generator Backend
 
-Study Generator Web App @ studygenerator.com
+Study Generator Web App @ [studygenerator.com](https://www.studygenerator.com)
 
 -------------------------------
 
